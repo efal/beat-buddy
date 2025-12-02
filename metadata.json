@@ -1,0 +1,5 @@
+{
+  "name": "TaktMeister AI",
+  "description": "Ein professionelles, mobil-optimiertes Metronom mit KI-gestützten Übungsroutinen und präziser Web-Audio-Timing-Engine.",
+  "requestFramePermissions": []
+}
