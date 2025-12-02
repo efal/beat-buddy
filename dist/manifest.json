@@ -1,7 +1,7 @@
 {
-    "name": "TaktMeister",
-    "short_name": "TaktMeister",
-    "description": "Professionelles Metronom mit AI-Coaching für Musiker",
+    "name": "Beat Buddy",
+    "short_name": "Beat Buddy",
+    "description": "Professional metronome for musicians - fully offline",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#0f172a",
@@ -26,5 +26,5 @@
         "entertainment",
         "utilities"
     ],
-    "lang": "de"
+    "lang": "en"
 }
