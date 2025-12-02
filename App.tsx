@@ -106,6 +106,7 @@ const App: React.FC = () => {
                     activeBeat={activeBeat}
                     beatsPerMeasure={beatsPerMeasure}
                     isPlaying={isPlaying}
+                    bpm={bpm}
                 />
 
                 <div className="mt-8 w-full">
