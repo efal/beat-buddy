@@ -16,9 +16,9 @@ const Visualizer: React.FC<VisualizerProps> = ({ activeBeat, beatsPerMeasure, is
     // Update target angle when beat changes
     React.useEffect(() => {
         if (isPlaying && activeBeat >= 0) {
-            // Swing pattern: 0 -> right (+40deg), 1 -> left (-40deg), etc.
+            // Swing pattern: 0 -> left (-40deg), 1 -> right (+40deg), etc.
             const maxAngle = 40;
-            const newAngle = activeBeat % 2 === 0 ? maxAngle : -maxAngle;
+            const newAngle = activeBeat % 2 === 0 ? -maxAngle : maxAngle;
             setTargetAngle(newAngle);
         } else {
             setTargetAngle(0);
