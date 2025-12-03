@@ -2,124 +2,114 @@ import * as React from 'react';
 import { SoundType } from '../types';
 
 interface ControlsProps {
-  bpm: number;
-  setBpm: (bpm: number) => void;
-  isPlaying: boolean;
-  onToggle: () => void;
-  volume: number;
-  setVolume: (vol: number) => void;
+    bpm: number;
+    setBpm: (bpm: number) => void;
+    isPlaying: boolean;
+    onToggle: () => void;
 }
 
-const Controls: React.FC<ControlsProps> = ({ 
-    bpm, 
-    setBpm, 
-    isPlaying, 
-    onToggle,
-    volume,
-    setVolume
+const Controls: React.FC<ControlsProps> = ({
+    bpm,
+    setBpm,
+    isPlaying,
+    onToggle
 }) => {
-    const [tapHistory, setTapHistory] = React.useState<number[]>([]);
-    
-    // Handle BPM slider change
-    const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setBpm(Number(e.target.value));
-    };
+    const [tapTimes, setTapTimes] = React.useState<number[]>([]);
+    const tapTimeoutRef = React.useRef<number | null>(null);
 
     // Handle increments
     const adjustBpm = (amount: number) => {
         setBpm(Math.max(20, Math.min(300, bpm + amount)));
     };
 
-    // Tap Tempo Logic
+    // Handle tap tempo
     const handleTap = () => {
         const now = Date.now();
-        // Remove taps older than 2 seconds to keep it fresh
-        const newHistory = [...tapHistory.filter(t => now - t < 2000), now];
-        setTapHistory(newHistory);
 
-        if (newHistory.length > 1) {
-            // Calculate intervals
-            const intervals = [];
-            for (let i = 1; i < newHistory.length; i++) {
-                intervals.push(newHistory[i] - newHistory[i-1]);
-            }
-            const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-            const newBpm = Math.round(60000 / avgInterval);
-            if (newBpm >= 20 && newBpm <= 300) {
-                setBpm(newBpm);
-            }
+        // Clear timeout if exists
+        if (tapTimeoutRef.current) {
+            window.clearTimeout(tapTimeoutRef.current);
         }
+
+        setTapTimes(prevTimes => {
+            const newTimes = [...prevTimes, now];
+
+            // Keep only last 4 taps
+            const recentTimes = newTimes.slice(-4);
+
+            // Calculate BPM if we have at least 2 taps
+            if (recentTimes.length >= 2) {
+                const intervals: number[] = [];
+                for (let i = 1; i < recentTimes.length; i++) {
+                    intervals.push(recentTimes[i] - recentTimes[i - 1]);
+                }
+
+                // Average interval in milliseconds
+                const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+
+                // Convert to BPM
+                const calculatedBpm = Math.round(60000 / avgInterval);
+
+                // Set BPM if it's in valid range
+                if (calculatedBpm >= 20 && calculatedBpm <= 300) {
+                    setBpm(calculatedBpm);
+                }
+            }
+
+            return recentTimes;
+        });
+
+        // Reset tap times after 2 seconds of inactivity
+        tapTimeoutRef.current = window.setTimeout(() => {
+            setTapTimes([]);
+        }, 2000);
     };
 
     return (
-        <div className="w-full max-w-md mx-auto px-4 flex flex-col items-center space-y-6">
-            
-            {/* BPM Display */}
-            <div className="flex items-center justify-between w-full">
-                <button 
+        <div className="w-full flex flex-col items-center space-y-6">
+
+            {/* BPM Display with +/- buttons and TAP */}
+            <div className="flex items-center justify-center gap-4 w-full">
+                <button
                     onClick={() => adjustBpm(-1)}
-                    className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800 text-slate-300 active:bg-slate-700 text-2xl font-bold"
+                    className="w-16 h-16 flex items-center justify-center rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-3xl font-bold shadow-lg active:scale-95 transition-all"
                 >
-                    -
+                    −
                 </button>
-                <div className="text-center">
-                    <div className="text-6xl font-black text-white tabular-nums tracking-tighter">
+
+                <div className="flex flex-col items-center bg-slate-800/50 px-12 py-6 rounded-2xl border-2 border-slate-700">
+                    <div className="text-8xl font-black text-white tabular-nums tracking-tighter">
                         {bpm}
                     </div>
-                    <div className="text-sm text-slate-400 uppercase tracking-widest font-semibold">BPM</div>
                 </div>
-                <button 
+
+                <button
                     onClick={() => adjustBpm(1)}
-                    className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-800 text-slate-300 active:bg-slate-700 text-2xl font-bold"
+                    className="w-16 h-16 flex items-center justify-center rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-3xl font-bold shadow-lg active:scale-95 transition-all"
                 >
                     +
                 </button>
             </div>
 
-            {/* Slider */}
-            <input 
-                type="range" 
-                min="20" 
-                max="300" 
-                value={bpm} 
-                onChange={handleSliderChange}
-                className="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-            />
+            {/* TAP Tempo Button */}
+            <button
+                onClick={handleTap}
+                className="px-8 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-cyan-400 font-bold uppercase tracking-wider text-sm shadow-lg active:scale-95 transition-all border-2 border-slate-600"
+            >
+                TAP Tempo {tapTimes.length > 0 && `(${tapTimes.length})`}
+            </button>
 
-            {/* Main Action Buttons */}
-            <div className="grid grid-cols-2 gap-4 w-full">
-                <button 
-                    onClick={handleTap}
-                    className="py-4 px-6 rounded-2xl bg-slate-800 text-cyan-400 font-bold uppercase tracking-wider text-sm border-2 border-transparent active:border-cyan-500/50 transition-all hover:bg-slate-750"
-                >
-                    TAP
-                </button>
-                <button 
-                    onClick={onToggle}
-                    className={`
-                        py-4 px-6 rounded-2xl font-bold uppercase tracking-wider text-sm text-white shadow-lg transition-all transform active:scale-95
-                        ${isPlaying 
-                            ? 'bg-rose-500 hover:bg-rose-600 shadow-rose-900/20' 
-                            : 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-900/20'}
-                    `}
-                >
-                    {isPlaying ? 'STOP' : 'START'}
-                </button>
-            </div>
-
-             {/* Volume Slider - Small */}
-             <div className="w-full flex items-center space-x-3 pt-2">
-                <span className="text-xs text-slate-500">VOL</span>
-                <input 
-                    type="range" 
-                    min="0" 
-                    max="1" 
-                    step="0.01" 
-                    value={volume}
-                    onChange={(e) => setVolume(parseFloat(e.target.value))}
-                    className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-slate-400"
-                />
-            </div>
+            {/* Start/Stop Button */}
+            <button
+                onClick={onToggle}
+                className={`
+                    w-full max-w-md py-6 rounded-2xl font-bold uppercase tracking-wider text-xl text-white shadow-2xl transition-all transform active:scale-98
+                    ${isPlaying
+                        ? 'bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700'
+                        : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700'}`}
+            >
+                {isPlaying ? 'Stop' : 'Start'}
+            </button>
         </div>
     );
 };

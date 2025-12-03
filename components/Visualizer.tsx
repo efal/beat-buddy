@@ -8,116 +8,125 @@ interface VisualizerProps {
 }
 
 const Visualizer: React.FC<VisualizerProps> = ({ activeBeat, beatsPerMeasure, isPlaying, bpm }) => {
-    const dots = Array.from({ length: beatsPerMeasure }, (_, i) => i);
-    const [animationKey, setAnimationKey] = React.useState(0);
+    const [targetAngle, setTargetAngle] = React.useState(0);
 
-    // Calculate beat duration in seconds for animation timing
-    const beatDuration = 60 / bpm;
+    // Calculate beat duration in milliseconds for animation timing
+    const beatDuration = (60 / bpm) * 1000;
 
-    // Restart animation on each beat change
+    // Update target angle when beat changes
     React.useEffect(() => {
         if (isPlaying && activeBeat >= 0) {
-            setAnimationKey(prev => prev + 1);
+            // Swing pattern: 0 -> right (+40deg), 1 -> left (-40deg), etc.
+            const maxAngle = 40;
+            const newAngle = activeBeat % 2 === 0 ? maxAngle : -maxAngle;
+            setTargetAngle(newAngle);
+        } else {
+            setTargetAngle(0);
         }
     }, [activeBeat, isPlaying]);
 
     return (
-        <div className="w-full flex flex-col items-center justify-center py-8">
-            {/* Horizontal Track Container */}
-            <div className="relative w-full max-w-2xl h-32 mb-8 px-8">
-                {/* Track Line */}
-                <div className="absolute top-1/2 left-8 right-8 h-1 bg-slate-700 rounded-full -translate-y-1/2">
-                    {/* Track Glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-cyan-500/10 to-cyan-500/20 rounded-full blur-sm" />
-                </div>
+        <div className="w-full flex flex-col items-center justify-center scale-75">
+            {/* Metronome Container - More Compact */}
+            <div className="relative w-56 h-64 flex items-center justify-center">
+                {/* Metronome Body - Pyramid Shape */}
+                <svg
+                    viewBox="0 0 200 300"
+                    className="w-full h-full"
+                    style={{ filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5))' }}
+                >
+                    {/* Main pyramid body */}
+                    <path
+                        d="M 100 30 L 160 270 L 40 270 Z"
+                        fill="#d1d5db"
+                        stroke="#9ca3af"
+                        strokeWidth="2"
+                    />
 
-                {/* Beat Markers on Track */}
-                <div className="absolute top-1/2 left-8 right-8 -translate-y-1/2 flex justify-between">
-                    {dots.map((index) => (
-                        <div
-                            key={index}
-                            className={`
-                            w-3 h-3 rounded-full transition-all duration-150
-                            ${index === 0 ? 'bg-cyan-500' : 'bg-slate-600'}
-                        `}
-                        />
-                    ))}
-                </div>
+                    {/* Inner detail lines (tempo markings) */}
+                    <line x1="55" y1="240" x2="145" y2="240" stroke="#6b7280" strokeWidth="1.5" />
+                    <line x1="60" y1="210" x2="140" y2="210" stroke="#6b7280" strokeWidth="1.5" />
+                    <line x1="65" y1="180" x2="135" y2="180" stroke="#6b7280" strokeWidth="1.5" />
+                    <line x1="70" y1="150" x2="130" y2="150" stroke="#6b7280" strokeWidth="1.5" />
+                    <line x1="75" y1="120" x2="125" y2="120" stroke="#6b7280" strokeWidth="1.5" />
+                    <line x1="80" y1="90" x2="120" y2="90" stroke="#6b7280" strokeWidth="1.5" />
+                    <line x1="85" y1="60" x2="115" y2="60" stroke="#6b7280" strokeWidth="1.5" />
 
-                {/* Sweeping Point - restarts on each beat */}
-                {isPlaying && (
-                    <div
-                        key={animationKey}
-                        className="absolute top-1/2 left-8 -translate-y-1/2 sweep-animation"
+                    {/* Base - darker, more 3D */}
+                    <ellipse
+                        cx="100"
+                        cy="270"
+                        rx="65"
+                        ry="12"
+                        fill="#1f2937"
+                    />
+                    <ellipse
+                        cx="100"
+                        cy="270"
+                        rx="50"
+                        ry="8"
+                        fill="#374151"
+                    />
+
+                    {/* Pendulum - ANCHORED AT BOTTOM (270), swings at top */}
+                    <g
+                        style={{
+                            transition: isPlaying ? `transform ${beatDuration}ms cubic-bezier(0.4, 0.0, 0.2, 1)` : 'none',
+                            transformOrigin: '100px 270px',
+                            transform: `rotate(${targetAngle}deg)`
+                        }}
                     >
-                        {/* Outer Glow Ring */}
-                        <div className="absolute -inset-4 rounded-full bg-cyan-500/30 blur-xl animate-pulse" />
-
-                        {/* Main Point */}
-                        <div className={`
-                        relative rounded-full shadow-[0_0_20px_rgba(6,182,212,0.6)]
-                        ${activeBeat === 0
-                                ? 'w-8 h-8 bg-cyan-400'
-                                : 'w-6 h-6 bg-cyan-500'
-                            }
-                    `}>
-                            {/* Inner Highlight */}
-                            <div className={`
-                            absolute inset-1 rounded-full
-                            ${activeBeat === 0 ? 'bg-cyan-100' : 'bg-cyan-300'}
-                        `} />
-
-                            {/* Pulse Ring on Beat 1 */}
-                            {activeBeat === 0 && (
-                                <div className="absolute inset-0 rounded-full border-2 border-cyan-400 animate-ping" />
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                {/* Static point when paused */}
-                {!isPlaying && (
-                    <div className="absolute top-1/2 left-8 -translate-y-1/2">
-                        <div className="w-6 h-6 rounded-full bg-cyan-500/50">
-                            <div className="absolute inset-1 rounded-full bg-cyan-300/50" />
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Beat Counter Dots */}
-            <div className="flex gap-3">
-                {dots.map((index) => {
-                    const isActive = isPlaying && activeBeat === index;
-                    const isFirst = index === 0;
-                    return (
-                        <div
-                            key={index}
-                            className={`
-                            h-4 w-4 rounded-full transition-all duration-100
-                            ${isActive
-                                    ? (isFirst ? 'bg-cyan-400 scale-125 shadow-[0_0_10px_rgba(6,182,212,0.8)]' : 'bg-slate-200 scale-125')
-                                    : 'bg-slate-700'
-                                }
-                        `}
+                        {/* Pendulum rod - from bottom (270) to top (50) */}
+                        <line
+                            x1="100"
+                            y1="270"
+                            x2="100"
+                            y2="50"
+                            stroke="#f59e0b"
+                            strokeWidth="3"
+                            strokeLinecap="round"
                         />
-                    );
-                })}
+
+                        {/* Pendulum weight at TOP */}
+                        <circle
+                            cx="100"
+                            cy="50"
+                            r="10"
+                            fill="#f59e0b"
+                            stroke="#ea580c"
+                            strokeWidth="2"
+                        />
+
+                        {/* Pendulum glow when playing */}
+                        {isPlaying && (
+                            <circle
+                                cx="100"
+                                cy="50"
+                                r="16"
+                                fill="#f59e0b"
+                                opacity="0.4"
+                            />
+                        )}
+                    </g>
+
+                    {/* Anchor point at bottom - visible mount */}
+                    <circle
+                        cx="100"
+                        cy="270"
+                        r="6"
+                        fill="#374151"
+                        stroke="#6b7280"
+                        strokeWidth="2"
+                    />
+                </svg>
             </div>
 
-            <style jsx>{`
-            @keyframes sweepRight {
-                from {
-                    transform: translateX(0) translateY(-50%);
-                }
-                to {
-                    transform: translateX(calc(100vw - 20rem)) translateY(-50%);
-                }
-            }
-            .sweep-animation {
-                animation: sweepRight ${beatDuration}s linear forwards;
-            }
-        `}</style>
+            {/* Beat Count Display - Compact */}
+            <div className="text-center mt-2">
+                <div className="text-lg font-bold text-white">
+                    Beat: {isPlaying && activeBeat >= 0 ? activeBeat + 1 : '-'}
+                </div>
+            </div>
         </div>
     );
 };
