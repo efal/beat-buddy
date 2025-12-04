@@ -43,27 +43,23 @@ const App: React.FC = () => {
     const tempoMarking = getTempoMarking(bpm);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white flex flex-col overflow-hidden">
 
-            {/* Header with Icon and Title */}
-            <header className="w-full p-4 flex items-center justify-center gap-3 border-b border-cyan-500/20">
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2L6 20h12L12 2z" fill="currentColor" className="text-cyan-400" />
-                </svg>
-                <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                    Metronome
-                </h1>
-            </header>
+            {/* Neon Background Glow Effects */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px]" />
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px]" />
+            </div>
 
             {/* Main Content Area */}
-            <main className="flex-1 w-full max-w-4xl mx-auto flex flex-col items-center justify-between px-4 py-4 overflow-visible">
+            <main className="relative flex-1 w-full max-w-4xl mx-auto flex flex-col items-center justify-between px-6 py-6 overflow-visible">
 
                 {/* Top Section: Tempo & Time Signature Row */}
-                <div className="w-full max-w-md flex justify-between items-center text-sm">
-                    <div className="text-cyan-400 font-semibold">
+                <div className="w-full max-w-md flex justify-between items-center text-sm mt-2">
+                    <div className="text-cyan-400 font-bold text-lg drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]">
                         {tempoMarking}
                     </div>
-                    <div className="text-white font-semibold">
+                    <div className="text-white font-bold text-lg">
                         {beatsPerMeasure}/4
                     </div>
                 </div>
@@ -88,43 +84,25 @@ const App: React.FC = () => {
                     />
                 </div>
 
-                {/* Beat Indicator Dots */}
-                <div className="flex gap-2 mb-2">
-                    {Array.from({ length: beatsPerMeasure }, (_, i) => {
-                        const isActive = isPlaying && activeBeat === i;
-                        const isFirst = i === 0;
-                        return (
-                            <div
-                                key={i}
-                                className={`
-                                    h-2 w-2 rounded-full transition-all duration-100
-                                    ${isActive
-                                        ? (isFirst ? 'bg-cyan-400 scale-150 shadow-[0_0_8px_rgba(6,182,212,0.8)]' : 'bg-cyan-300 scale-150')
-                                        : 'bg-cyan-900'
-                                    }
-                                `}
-                            />
-                        );
-                    })}
-                </div>
 
-                {/* Compact Settings Panel - Always Visible */}
-                <div className="w-full max-w-2xl bg-slate-800/40 p-3 rounded-xl border border-slate-700/50">
-                    <div className="grid grid-cols-3 gap-4">
+
+                {/* Compact Settings Panel - Glassmorphism Style */}
+                <div className="w-full max-w-2xl bg-slate-800/30 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+                    <div className="grid grid-cols-3 gap-6">
 
                         {/* Time Signature - Compact */}
                         <div>
-                            <label className="text-[10px] text-slate-400 uppercase font-bold tracking-wide mb-1.5 block">
-                                Time Signature
+                            <label className="text-[10px] text-cyan-400/80 uppercase font-bold tracking-widest mb-2 block drop-shadow-[0_0_4px_rgba(6,182,212,0.4)]">
+                                Takt
                             </label>
-                            <div className="grid grid-cols-2 gap-1">
+                            <div className="grid grid-cols-2 gap-1.5">
                                 {[2, 3, 4, 6].map(beats => (
                                     <button
                                         key={beats}
                                         onClick={() => setBeatsPerMeasure(beats)}
-                                        className={`py-1.5 px-2 rounded-lg text-xs font-bold border transition-all ${beatsPerMeasure === beats
-                                            ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50'
-                                            : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
+                                        className={`py-2 px-3 rounded-xl text-xs font-bold border-2 transition-all duration-200 ${beatsPerMeasure === beats
+                                            ? 'bg-cyan-500/30 text-cyan-300 border-cyan-400/60 shadow-[0_0_12px_rgba(6,182,212,0.4)]'
+                                            : 'bg-slate-800/50 border-slate-600/40 text-slate-400 hover:border-cyan-500/30 hover:text-cyan-400'
                                             }`}
                                     >
                                         {beats}/4
@@ -135,10 +113,10 @@ const App: React.FC = () => {
 
                         {/* Sound Selection - Compact */}
                         <div>
-                            <label className="text-[10px] text-slate-400 uppercase font-bold tracking-wide mb-1.5 block">
+                            <label className="text-[10px] text-purple-400/80 uppercase font-bold tracking-widest mb-2 block drop-shadow-[0_0_4px_rgba(168,85,247,0.4)]">
                                 Sound
                             </label>
-                            <div className="grid grid-cols-2 gap-1">
+                            <div className="grid grid-cols-2 gap-1.5">
                                 {[
                                     { id: SoundType.CLICK, label: 'Digital' },
                                     { id: SoundType.WOODBLOCK, label: 'Wood' },
@@ -148,9 +126,9 @@ const App: React.FC = () => {
                                     <button
                                         key={sound.id}
                                         onClick={() => setSoundType(sound.id)}
-                                        className={`py-1.5 px-2 rounded-lg text-xs font-medium border transition-all ${soundType === sound.id
-                                            ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50'
-                                            : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
+                                        className={`py-2 px-3 rounded-xl text-xs font-medium border-2 transition-all duration-200 ${soundType === sound.id
+                                            ? 'bg-purple-500/30 text-purple-300 border-purple-400/60 shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                                            : 'bg-slate-800/50 border-slate-600/40 text-slate-400 hover:border-purple-500/30 hover:text-purple-400'
                                             }`}
                                     >
                                         {sound.label}
@@ -161,17 +139,17 @@ const App: React.FC = () => {
 
                         {/* Volume Control - Radio Buttons */}
                         <div>
-                            <label className="text-[10px] text-slate-400 uppercase font-bold tracking-wide mb-1.5 block">
+                            <label className="text-[10px] text-pink-400/80 uppercase font-bold tracking-widest mb-2 block drop-shadow-[0_0_4px_rgba(236,72,153,0.4)]">
                                 Lautstärke
                             </label>
-                            <div className="grid grid-cols-3 gap-1">
+                            <div className="grid grid-cols-3 gap-1.5">
                                 {[0, 20, 40, 60, 80, 100].map(vol => (
                                     <button
                                         key={vol}
                                         onClick={() => setVolume(vol / 100)}
-                                        className={`py-1.5 px-2 rounded-lg text-xs font-bold border transition-all ${Math.round(volume * 100) === vol
-                                            ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50'
-                                            : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
+                                        className={`py-2 px-2 rounded-xl text-xs font-bold border-2 transition-all duration-200 ${Math.round(volume * 100) === vol
+                                            ? 'bg-pink-500/30 text-pink-300 border-pink-400/60 shadow-[0_0_12px_rgba(236,72,153,0.4)]'
+                                            : 'bg-slate-800/50 border-slate-600/40 text-slate-400 hover:border-pink-500/30 hover:text-pink-400'
                                             }`}
                                     >
                                         {vol}%

@@ -66,26 +66,26 @@ const Controls: React.FC<ControlsProps> = ({
     };
 
     return (
-        <div className="w-full flex flex-col items-center space-y-6">
+        <div className="w-full flex flex-col items-center space-y-5">
 
-            {/* BPM Display with +/- buttons and TAP */}
-            <div className="flex items-center justify-center gap-4 w-full">
+            {/* BPM Display with +/- buttons */}
+            <div className="flex items-center justify-center gap-3 w-full">
                 <button
                     onClick={() => adjustBpm(-1)}
-                    className="w-16 h-16 flex items-center justify-center rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-3xl font-bold shadow-lg active:scale-95 transition-all"
+                    className="w-14 h-14 flex items-center justify-center rounded-2xl bg-slate-800/60 backdrop-blur-sm border-2 border-cyan-500/40 text-cyan-400 text-3xl font-bold shadow-lg active:scale-90 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-200"
                 >
                     −
                 </button>
 
-                <div className="flex flex-col items-center bg-slate-800/50 px-12 py-6 rounded-2xl border-2 border-slate-700">
-                    <div className="text-8xl font-black text-white tabular-nums tracking-tighter">
+                <div className="flex flex-col items-center bg-slate-900/60 backdrop-blur-sm px-10 py-4 rounded-2xl border-2 border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
+                    <div className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 tabular-nums tracking-tighter drop-shadow-[0_0_20px_rgba(255,255,255,0.15)]">
                         {bpm}
                     </div>
                 </div>
 
                 <button
                     onClick={() => adjustBpm(1)}
-                    className="w-16 h-16 flex items-center justify-center rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-3xl font-bold shadow-lg active:scale-95 transition-all"
+                    className="w-14 h-14 flex items-center justify-center rounded-2xl bg-slate-800/60 backdrop-blur-sm border-2 border-cyan-500/40 text-cyan-400 text-3xl font-bold shadow-lg active:scale-90 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-200"
                 >
                     +
                 </button>
@@ -94,19 +94,19 @@ const Controls: React.FC<ControlsProps> = ({
             {/* TAP Tempo Button */}
             <button
                 onClick={handleTap}
-                className="px-8 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-cyan-400 font-bold uppercase tracking-wider text-sm shadow-lg active:scale-95 transition-all border-2 border-slate-600"
+                className="px-6 py-2.5 rounded-xl bg-slate-800/50 backdrop-blur-sm hover:bg-slate-700/50 text-purple-400 font-bold uppercase tracking-wider text-xs shadow-lg active:scale-95 transition-all duration-200 border-2 border-purple-500/30 hover:border-purple-400/60 hover:shadow-[0_0_16px_rgba(168,85,247,0.25)]"
             >
-                TAP Tempo {tapTimes.length > 0 && `(${tapTimes.length})`}
+                TAP Tempo {tapTimes.length > 0 && <span className="text-purple-300">({tapTimes.length})</span>}
             </button>
 
             {/* Start/Stop Button */}
             <button
                 onClick={onToggle}
                 className={`
-                    w-full max-w-md py-6 rounded-2xl font-bold uppercase tracking-wider text-xl text-white shadow-2xl transition-all transform active:scale-98
+                    w-full max-w-sm py-5 rounded-2xl font-bold uppercase tracking-widest text-lg text-white shadow-2xl transition-all duration-300 transform active:scale-95
                     ${isPlaying
-                        ? 'bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700'
-                        : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700'}`}
+                        ? 'bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 shadow-[0_0_30px_rgba(244,63,94,0.4)] border-2 border-rose-400/30'
+                        : 'bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-[0_0_30px_rgba(6,182,212,0.3)] border-2 border-cyan-400/30'}`}
             >
                 {isPlaying ? 'Stop' : 'Start'}
             </button>
