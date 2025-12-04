@@ -44,7 +44,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ activeBeat, beatsPerMeasure, is
         : '#06b6d4'; // cyan when stopped
 
     return (
-        <div className="w-full flex flex-col items-center justify-center scale-[1.28]">
+        <div className="w-full flex flex-col items-center justify-center scale-100 md:scale-[1.28]">
             {/* Metronome Container - wider for pendulum swing */}
             <div className="relative w-72 h-64 flex items-center justify-center">
                 {/* Neon Glow Background */}
