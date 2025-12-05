@@ -162,6 +162,9 @@ const App: React.FC = () => {
                     </div>
                 </div>
 
+                <div className="w-full text-center text-slate-600/50 text-[10px] mt-4 font-mono">
+                    v1.1.0
+                </div>
             </main>
 
         </div>
