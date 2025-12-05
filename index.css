@@ -1,12 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", system-ui, sans-serif;
-  --color-slate-950: #020617; /* Default Tailwind colors, just to be safe if not included */
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-slate-950: #020617;
 }
-
-/* Inter Font - embedded for offline use */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 
 body {
   font-family: var(--font-sans);
