@@ -71,6 +71,8 @@ const App: React.FC = () => {
                         setBpm={setBpm}
                         isPlaying={isPlaying}
                         onToggle={toggle}
+                        volume={volume}
+                        setVolume={setVolume}
                     />
                 </div>
 
