@@ -25,6 +25,18 @@ const App: React.FC = () => {
     const [activeBeat, setActiveBeat] = React.useState(-1);
     const [volume, setVolume] = React.useState(0.8);
 
+    const [previousVolume, setPreviousVolume] = React.useState(0.8);
+    const isMuted = volume === 0;
+
+    const toggleMute = () => {
+        if (isMuted) {
+            setVolume(previousVolume > 0 ? previousVolume : 0.8);
+        } else {
+            setPreviousVolume(volume);
+            setVolume(0);
+        }
+    };
+
     const subdivision = 1;
 
     const onBeat = React.useCallback((beatIndex: number, isAccent: boolean) => {
@@ -71,19 +83,33 @@ const App: React.FC = () => {
                         setBpm={setBpm}
                         isPlaying={isPlaying}
                         onToggle={toggle}
-                        volume={volume}
-                        setVolume={setVolume}
                     />
                 </div>
 
                 {/* Metronome Visualizer - Scaled Down with overflow visible */}
-                <div className="w-full flex justify-center -my-4 overflow-visible px-8">
-                    <Visualizer
-                        activeBeat={activeBeat}
-                        beatsPerMeasure={beatsPerMeasure}
-                        isPlaying={isPlaying}
-                        bpm={bpm}
-                    />
+                <div className="w-full flex justify-center -my-4 overflow-visible px-8 relative">
+                    {/* Mute Overlay Icon */}
+                    {isMuted && (
+                        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-24 h-24 text-red-500/60 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                            </svg>
+                        </div>
+                    )}
+
+                    <div
+                        onClick={toggleMute}
+                        className={`cursor-pointer transition-opacity duration-300 ${isMuted ? 'opacity-40 grayscale' : 'opacity-100 hover:opacity-90'} active:scale-95 transform transition-transform`}
+                        title={isMuted ? "Unmute" : "Mute (Tap)"}
+                    >
+                        <Visualizer
+                            activeBeat={activeBeat}
+                            beatsPerMeasure={beatsPerMeasure}
+                            isPlaying={isPlaying}
+                            bpm={bpm}
+                        />
+                    </div>
                 </div>
 
 
@@ -163,7 +189,7 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="w-full flex flex-col items-center gap-2 mt-4 text-slate-600/50">
-                    <div className="text-[10px] font-mono">v1.1.0</div>
+                    <div className="text-[10px] font-mono">v1.2.0</div>
                     <button
                         onClick={async () => {
                             if (window.confirm('App zurücksetzen und neu laden? Dies behebt Update-Probleme.')) {

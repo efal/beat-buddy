@@ -1,4 +1,4 @@
-const CACHE_NAME = 'taktmeister-v2';
+const CACHE_NAME = 'taktmeister-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',

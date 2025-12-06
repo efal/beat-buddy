@@ -6,35 +6,16 @@ interface ControlsProps {
     setBpm: (bpm: number) => void;
     isPlaying: boolean;
     onToggle: () => void;
-    volume: number;
-    setVolume: (volume: number) => void;
 }
 
 const Controls: React.FC<ControlsProps> = ({
     bpm,
     setBpm,
     isPlaying,
-    onToggle,
-    volume,
-    setVolume
+    onToggle
 }) => {
     const [tapTimes, setTapTimes] = React.useState<number[]>([]);
     const tapTimeoutRef = React.useRef<number | null>(null);
-    const [previousVolume, setPreviousVolume] = React.useState(0.8);
-
-    const isMuted = volume === 0;
-
-    // Handle mute toggle
-    const handleMuteToggle = () => {
-        if (isMuted) {
-            // Unmute: restore previous volume
-            setVolume(previousVolume > 0 ? previousVolume : 0.8);
-        } else {
-            // Mute: save current volume and set to 0
-            setPreviousVolume(volume);
-            setVolume(0);
-        }
-    };
 
     // Handle increments
     const adjustBpm = (amount: number) => {
@@ -118,45 +99,17 @@ const Controls: React.FC<ControlsProps> = ({
                 TAP Tempo {tapTimes.length > 0 && <span className="text-purple-300">({tapTimes.length})</span>}
             </button>
 
-            {/* Start/Stop and Mute Buttons */}
-            <div className="flex items-center gap-3 w-full max-w-sm">
-                {/* Mute Button */}
-                <button
-                    onClick={handleMuteToggle}
-                    className={`
-                        w-16 h-16 flex items-center justify-center rounded-2xl font-bold text-2xl shadow-xl transition-all duration-300 transform active:scale-95 border-2
-                        ${isMuted
-                            ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 shadow-[0_0_20px_rgba(245,158,11,0.4)] border-amber-400/30 text-white'
-                            : 'bg-slate-800/60 backdrop-blur-sm border-slate-600/40 text-slate-400 hover:border-slate-500 hover:text-white'
-                        }`}
-                    title={isMuted ? 'Unmute' : 'Mute'}
-                >
-                    {isMuted ? (
-                        // Muted icon (speaker with X)
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-                        </svg>
-                    ) : (
-                        // Unmuted icon (speaker with waves)
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                        </svg>
-                    )}
-                </button>
-
-                {/* Start/Stop Button */}
-                <button
-                    onClick={onToggle}
-                    className={`
-                        flex-1 py-5 rounded-2xl font-bold uppercase tracking-widest text-lg text-white shadow-2xl transition-all duration-300 transform active:scale-95
-                        ${isPlaying
-                            ? 'bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 shadow-[0_0_30px_rgba(244,63,94,0.4)] border-2 border-rose-400/30'
-                            : 'bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-[0_0_30px_rgba(6,182,212,0.3)] border-2 border-cyan-400/30'}`}
-                >
-                    {isPlaying ? 'Stop' : 'Start'}
-                </button>
-            </div>
+            {/* Start/Stop Button - Full Width again */}
+            <button
+                onClick={onToggle}
+                className={`
+                    w-full max-w-sm py-5 rounded-2xl font-bold uppercase tracking-widest text-lg text-white shadow-2xl transition-all duration-300 transform active:scale-95
+                    ${isPlaying
+                        ? 'bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 shadow-[0_0_30px_rgba(244,63,94,0.4)] border-2 border-rose-400/30'
+                        : 'bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-[0_0_30px_rgba(6,182,212,0.3)] border-2 border-cyan-400/30'}`}
+            >
+                {isPlaying ? 'Stop' : 'Start'}
+            </button>
         </div>
     );
 };
