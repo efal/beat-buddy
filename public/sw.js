@@ -1,10 +1,10 @@
-const CACHE_NAME = 'taktmeister-v1';
+const CACHE_NAME = 'taktmeister-v2';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // Install event - cache static assets
@@ -43,8 +43,8 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Network-first strategy for API calls
-  if (url.hostname.includes('generativelanguage.googleapis.com') || 
-      url.hostname.includes('aistudiocdn.com')) {
+  if (url.hostname.includes('generativelanguage.googleapis.com') ||
+    url.hostname.includes('aistudiocdn.com')) {
     event.respondWith(
       fetch(request)
         .catch(() => {
@@ -80,7 +80,7 @@ self.addEventListener('fetch', (event) => {
       .catch(() => {
         // Return offline page for navigation requests
         if (request.destination === 'document') {
-          return caches.match('/index.html');
+          return caches.match('./index.html');
         }
       })
   );
