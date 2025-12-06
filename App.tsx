@@ -162,8 +162,30 @@ const App: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="w-full text-center text-slate-600/50 text-[10px] mt-4 font-mono">
-                    v1.1.0
+                <div className="w-full flex flex-col items-center gap-2 mt-4 text-slate-600/50">
+                    <div className="text-[10px] font-mono">v1.1.0</div>
+                    <button
+                        onClick={async () => {
+                            if (window.confirm('App zurücksetzen und neu laden? Dies behebt Update-Probleme.')) {
+                                if ('serviceWorker' in navigator) {
+                                    const registrations = await navigator.serviceWorker.getRegistrations();
+                                    for (const registration of registrations) {
+                                        await registration.unregister();
+                                    }
+                                }
+                                if ('caches' in window) {
+                                    const keys = await caches.keys();
+                                    for (const key of keys) {
+                                        await caches.delete(key);
+                                    }
+                                }
+                                window.location.reload();
+                            }
+                        }}
+                        className="text-[9px] underline hover:text-red-400 cursor-pointer"
+                    >
+                        Update erzwingen
+                    </button>
                 </div>
             </main>
 
